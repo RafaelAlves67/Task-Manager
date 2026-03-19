@@ -1,0 +1,51 @@
+<div class="form-card">
+  <div class="form-header">
+    <h2>{{ isEdit ? 'Editar Tarefa' : 'Nova Tarefa' }}</h2>
+    <button class="close-btn" (click)="cancelled.emit()">✕</button>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <!-- Title -->
+    <div class="field" [class.has-error]="hasError('title')">
+      <label for="title">Título <span class="required">*</span></label>
+      <input id="title" formControlName="title" placeholder="Ex: Implementar autenticação" />
+      <span class="error-hint" *ngIf="hasError('title')">Título é obrigatório (máx. 255 caracteres).</span>
+    </div>
+
+    <!-- Description -->
+    <div class="field">
+      <label for="desc">Descrição</label>
+      <textarea id="desc" formControlName="description" rows="3" placeholder="Descreva a tarefa..."></textarea>
+    </div>
+
+    <!-- Priority & Status side by side -->
+    <div class="field-row">
+      <div class="field" [class.has-error]="hasError('priority')">
+        <label for="priority">Prioridade</label>
+        <select id="priority" formControlName="priority">
+          <option value="baixa">Baixa</option>
+          <option value="normal">Normal</option>
+          <option value="alta">Alta</option>
+        </select>
+      </div>
+
+      <div class="field" [class.has-error]="hasError('status')">
+        <label for="status">Status</label>
+        <select id="status" formControlName="status">
+          <option value="nao_iniciado">Não Iniciado</option>
+          <option value="em_progresso">Em Progresso</option>
+          <option value="concluido">Concluído</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="error-global" *ngIf="errorMsg">{{ errorMsg }}</div>
+
+    <div class="form-actions">
+      <button type="button" class="btn btn-secondary" (click)="cancelled.emit()">Cancelar</button>
+      <button type="submit"  class="btn btn-primary"  [disabled]="submitting">
+        {{ submitting ? 'Salvando...' : (isEdit ? 'Salvar' : 'Criar') }}
+      </button>
+    </div>
+  </form>
+</div>

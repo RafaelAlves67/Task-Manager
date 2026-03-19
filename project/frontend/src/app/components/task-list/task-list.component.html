@@ -1,0 +1,81 @@
+<div class="page">
+  <!-- Header -->
+  <header class="page-header">
+    <div class="header-left">
+      <span class="logo-mark">◈</span>
+      <h1 class="app-title">Task<span>Board</span></h1>
+    </div>
+    <button class="btn btn-primary" (click)="openCreate()">
+      <span class="btn-icon">+</span> Nova Tarefa
+    </button>
+  </header>
+
+  <!-- Filters -->
+  <section class="filters">
+    <label class="filter-group">
+      <span>Status</span>
+      <select [(ngModel)]="filterStatus">
+        <option value="">Todos</option>
+        <option value="nao_iniciado">Não Iniciado</option>
+        <option value="em_progresso">Em Progresso</option>
+        <option value="concluido">Concluído</option>
+      </select>
+    </label>
+    <label class="filter-group">
+      <span>Prioridade</span>
+      <select [(ngModel)]="filterPriority">
+        <option value="">Todas</option>
+        <option value="baixa">Baixa</option>
+        <option value="normal">Normal</option>
+        <option value="alta">Alta</option>
+      </select>
+    </label>
+    <span class="task-count">{{ filteredTasks.length }} tarefa(s)</span>
+  </section>
+
+  <!-- Loading / Error -->
+  <div class="state-msg" *ngIf="loading">Carregando...</div>
+  <div class="state-msg error" *ngIf="error">{{ error }}</div>
+
+  <!-- Task Grid -->
+  <div class="task-grid" *ngIf="!loading && !error">
+    <div class="empty-state" *ngIf="filteredTasks.length === 0">
+      <span class="empty-icon">📋</span>
+      <p>Nenhuma tarefa encontrada.</p>
+      <button class="btn btn-primary" (click)="openCreate()">Criar tarefa</button>
+    </div>
+
+    <div class="task-card" *ngFor="let task of filteredTasks">
+      <div class="card-top">
+        <span class="priority-badge" [ngClass]="priorityClass(task.priority)">
+          {{ priorityLabels[task.priority] }}
+        </span>
+        <span class="status-chip" [ngClass]="statusClass(task.status)">
+          {{ statusLabels[task.status] }}
+        </span>
+      </div>
+
+      <h3 class="card-title">{{ task.title }}</h3>
+      <p class="card-desc" *ngIf="task.description">{{ task.description }}</p>
+
+      <div class="card-footer">
+        <span class="card-date">{{ task.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
+        <div class="card-actions">
+          <button class="btn btn-icon-only edit" (click)="openEdit(task)" title="Editar">✏️</button>
+          <button class="btn btn-icon-only del"  (click)="deleteTask(task.id)" title="Excluir">🗑️</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal backdrop -->
+  <div class="modal-backdrop" *ngIf="showForm" (click)="onFormCancel()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <app-task-form
+        [task]="editingTask"
+        (saved)="onFormSave()"
+        (cancelled)="onFormCancel()">
+      </app-task-form>
+    </div>
+  </div>
+</div>
